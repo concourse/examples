@@ -1,0 +1,46 @@
+---
+resources:
+# The repo with our Dockerfile
+- name: concourse-examples
+  type: git
+  icon: github
+  source:
+    uri: https://github.com/concourse/examples.git
+    branch: master
+
+# Where we will push the image
+- name: simple-image
+  type: registry-image
+  icon: docker
+  source:
+    # You need to provide these variables when
+    # setting the pipeline
+    repository: ((image-repo-name))/simple-image
+    username: ((docker-username))
+    password: ((docker-password))
+
+jobs:
+- name: build-and-push
+  plan:
+  - get: concourse-examples
+  - task: build-task-image
+    privileged: true
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+  # Check out the README for oci-build-task at
+  # https://github.com/vito/oci-build-task
+          repository: vito/oci-build-task
+      inputs:
+      - name: concourse-examples
+      outputs:
+      - name: image
+      params:
+        CONTEXT: concourse-examples/Dockerfiles/simple
+      run:
+        path: build
+  - put: simple-image
+    params:
+      image: image/image.tar
