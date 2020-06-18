@@ -30,8 +30,8 @@ jobs:
       image_resource:
         type: registry-image
         source:
-  # Check out the README for oci-build-task at
-  # https://github.com/vito/oci-build-task
+          # Check out the README for oci-build-task at
+          # https://github.com/vito/oci-build-task
           repository: vito/oci-build-task
       inputs:
       - name: concourse-examples
