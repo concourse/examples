@@ -1,0 +1,15 @@
+---
+resources:
+  - name: concourse-examples
+    type: git
+    icon: github
+    source:
+      uri: https://github.com/concourse/examples
+
+jobs:
+  - name: job
+    public: true
+    plan:
+      - get: concourse-examples
+      - task: simple-task
+        file: concourse-examples/tasks/hello-world.yml
