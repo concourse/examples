@@ -17,7 +17,7 @@ jobs:
           platform: linux
           image_resource:
             type: registry-image
-            source: { repository: node, tag: "8" }
+            source: { repository: node }
           inputs:
             - name: nodejs.org-git
           run:
