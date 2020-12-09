@@ -31,7 +31,7 @@ jobs:
         file: concourse-examples/pipelines/pipeline-vars.yml
         vars:
           first: initial
-          number: "9000"
+          number: 9000
           hello: HAL
       - set_pipeline: task-passing-artifact
         file: concourse-examples/pipelines/task-passing-artifact.yml
@@ -51,3 +51,5 @@ jobs:
         file: concourse-examples/pipelines/nodejs-app-testing.yml
       - set_pipeline: php
         file: concourse-examples/pipelines/php-larvel-app-testing.yml
+      - set_pipeline: java
+        file: concourse-examples/pipelines/java.yml

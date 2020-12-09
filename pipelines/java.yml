@@ -1,0 +1,42 @@
+jobs:
+- name: test
+  plan:
+  - get: apache-kafka-git
+    trigger: true
+  - config:
+      caches:
+      - path: $HOME/.m2/repository
+      - path: $HOME/.gradle/caches/
+      - path: $HOME/.gradle/wrapper/
+      container_limits: {}
+      image_resource:
+        name: ""
+        source:
+          repository: gradle
+          tag: jdk8-slim
+        type: registry-image
+      inputs:
+      - name: apache-kafka-git
+      platform: linux
+      run:
+        args:
+        - -c
+        - |
+          java -Xmx32m -version
+          javac -J-Xmx32m -version
+
+          cd apache-kafka-git
+
+          gradle wrapper
+          ./gradlew rat
+          ./gradlew systemTestLibs
+        path: /bin/sh
+        user: root
+    task: run-tests
+  public: true
+resources:
+- icon: github
+  name: apache-kafka-git
+  source:
+    uri: https://github.com/apache/kafka.git
+  type: git
