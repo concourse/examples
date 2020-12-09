@@ -31,7 +31,7 @@ jobs:
         file: concourse-examples/pipelines/pipeline-vars.yml
         vars:
           first: initial
-          number: 9000
+          number: "9000"
           hello: HAL
       - set_pipeline: task-passing-artifact
         file: concourse-examples/pipelines/task-passing-artifact.yml
