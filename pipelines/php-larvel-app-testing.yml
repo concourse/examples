@@ -17,7 +17,7 @@ jobs:
           platform: linux
           image_resource:
             type: registry-image
-            source: { repository: php, tag: 7.2-cli }
+            source: { repository: composer }
           inputs:
             - name: larvel-websockets-git
           run:
@@ -25,21 +25,6 @@ jobs:
             args:
               - -c
               - |
-                set -e
-
-                apt-get update
-                apt-get install -y git unzip wget
-
-                EXPECTED_CHECKSUM="$(wget -q -O - https://composer.github.io/installer.sig)"
-                php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-                ACTUAL_CHECKSUM="$(php -r "echo hash_file('sha384', 'composer-setup.php');")"
-
-                if [ "$EXPECTED_CHECKSUM" != "$ACTUAL_CHECKSUM" ]
-                then
-                    >&2 echo 'ERROR: Invalid installer checksum'
-                    rm composer-setup.php
-                    exit 1
-                fi
                 cd larvel-websockets-git
 
                 composer install
