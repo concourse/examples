@@ -39,7 +39,7 @@ jobs:
         file: concourse-examples/pipelines/time-triggered.yml
       - set_pipeline: git-triggered
         file: concourse-examples/pipelines/git-triggered.yml
-      - set_pipeline: manually-triggered
+      - set_pipeline: manual-trigger
         file: concourse-examples/pipelines/manually-triggered.yml
       - set_pipeline: hooks
         file: concourse-examples/pipelines/job-and-task-hooks.yml
