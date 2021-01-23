@@ -33,6 +33,18 @@ jobs:
           first: initial
           number: "9000"
           hello: HAL
+      - set_pipeline: instance-groups
+        file: concourse-examples/pipelines/pipeline-vars.yml
+        instance_vars:
+          first: initial
+          number: "9000"
+          hello: HAL
+      - set_pipeline: instance-groups
+        file: concourse-examples/pipelines/pipeline-vars.yml
+        instance_vars:
+          first: second
+          number: "3000"
+          hello: WALLY-E
       - set_pipeline: task-passing-artifact
         file: concourse-examples/pipelines/task-passing-artifact.yml
       - set_pipeline: time-triggered
