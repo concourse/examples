@@ -15,12 +15,12 @@ jobs:
 - name: level-((number))-job
   public: true
   plan:
-- task: simple-task
-    config:
-      platform: linux
-      image_resource:
-        type: registry-image
-        source: { repository: busybox }
-      run:
-        path: echo
-        args: ["Hello, ((hello))!"]
+  - task: simple-task
+      config:
+        platform: linux
+        image_resource:
+          type: registry-image
+          source: { repository: busybox }
+        run:
+          path: echo
+          args: ["Hello, ((hello))!"]
