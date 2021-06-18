@@ -6,4 +6,4 @@ image_resource:
 
 run:
   path: echo
-  args: ["Hello world from Denver!"]
+  args: ["Hello world from Denver Colorado!"]
