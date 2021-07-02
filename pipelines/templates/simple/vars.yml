@@ -1,0 +1,6 @@
+#@data/values
+---
+job_name: "hello-world"
+task_name: "hello-task"
+args:
+  - "hello world of vars!"

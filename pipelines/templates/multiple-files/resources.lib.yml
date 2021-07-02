@@ -1,0 +1,25 @@
+#@ def resources(branch_name, artifact_slug):
+- name: repo
+  icon: git
+  type: mock
+  source:
+    initial_version: #@ "repo-at-" + branch_name
+    create_files:
+      branch.txt: #@ branch_name
+
+- name: image-rc
+  icon: oci
+  type: mock
+  source:
+    initial_version: #@ artifact_slug + "-rc"
+    create_files:
+      oci_image: #@ artifact_slug + "-rc"
+
+- name: dev-env
+  icon: wrench
+  type: mock
+
+- name: prod-env
+  icon: cloud-check
+  type: mock
+#@ end
