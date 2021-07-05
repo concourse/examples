@@ -90,7 +90,7 @@ jobs:
       run:
         path: sh
         args:
-        - -c
+        - -cx
         - |
           ytt -f ./concourse-examples/pipelines/templates/simple > hello-world-rendered.yml
           ytt -f ./concourse-examples/pipelines/templates/multiple-files > multi-files-rendered.yml
