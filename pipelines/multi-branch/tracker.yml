@@ -1,0 +1,83 @@
+resource_types:
+- name: git-branches
+  type: registry-image
+  source:
+    repository: aoldershaw/git-branches-resource
+
+resources:
+- name: feature-branches
+  type: git-branches
+  source:
+    uri: https://github.com/concourse/examples
+    branch_regex: 'feature/(?P<feature>.*)'
+
+- name: examples
+  type: git
+  source:
+    uri: https://github.com/concourse/examples
+
+jobs:
+- name: set-feature-pipelines
+  plan:
+  - in_parallel:
+    - get: feature-branches
+      trigger: true
+    - get: examples
+  - load_var: branches
+    file: feature-branches/branches.json
+  - across:
+    - var: branch
+      values: ((.:branches))
+    set_pipeline: dev
+    file: examples/pipelines/multi-branch/template.yml
+    instance_vars: {feature: ((.:branch.groups.feature))}
+    vars: {branch: ((.:branch.name))}
+
+- name: cleanup-inactive-workspaces
+  plan:
+  - get: feature-branches
+    passed: [set-feature-pipelines]
+    trigger: true
+  - load_var: active_branches
+    file: feature-branches/branches.json
+  - task: cleanup
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source: {repository: hashicorp/terraform}
+      params:
+        ACTIVE_BRANCHES: ((.:active_branches))
+        TERRAFORM_BACKEND_CONFIG:
+          terraform:
+            backend:
+              gcs:
+                bucket: concourse-examples
+                prefix: multi-branch/terraform
+                credentials: ((concourse_artifacts_json_key))
+      run:
+        path: sh
+        args:
+        - -c
+        - |
+          set -euo pipefail
+
+          apk add jq
+
+          active_features="$(echo "$ACTIVE_BRANCHES" | jq '[.[].groups.feature]')"
+
+          echo "$TERRAFORM_BACKEND_CONFIG" > backend.tf.json
+          terraform init
+          active_workspaces="$(terraform workspace list | grep -v '^[*]' | tr -d ' ' | jq --raw-input --slurp 'split("\n") | map(select(. != ""))')"
+
+          jq -nr "$active_workspaces - $active_features | .[]" | while read extra_workspace
+          do
+            echo "deleting workspace $extra_workspace"
+            terraform workspace select "$extra_workspace"
+            terraform init
+
+            terraform destroy -auto-approve
+
+            terraform workspace select default
+            terraform workspace delete "$extra_workspace"
+          done

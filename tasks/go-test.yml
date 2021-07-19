@@ -1,0 +1,20 @@
+platform: linux
+
+image_resource:
+  type: registry-image
+  source: { repository: golang }
+
+inputs:
+- name: repo
+  path: .
+
+params:
+  MODULE:
+
+run:
+  path: sh
+  args:
+  - -ce
+  - |
+    cd "$MODULE"
+    go test -v ./...

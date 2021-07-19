@@ -1,0 +1,28 @@
+platform: linux
+
+image_resource:
+  type: registry-image
+  source: { repository: golang }
+
+inputs:
+- name: repo
+  path: .
+
+outputs:
+- name: binary
+
+params:
+  MODULE:
+  BINARY_NAME:
+
+run:
+  path: sh
+  args:
+  - -ce
+  - |
+    root=$(pwd)
+    cd "$MODULE"
+    go build -o "/tmp/$BINARY_NAME"
+
+    timestamp=$(date '+%Y%m%d%H%M%S')
+    tar czf "$root/binary/$BINARY_NAME-$timestamp.tgz" -C /tmp "$BINARY_NAME"
