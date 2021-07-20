@@ -25,7 +25,7 @@ resources:
   type: gcs
   source:
     bucket: concourse-examples
-    json_key: ((concourse_artifacts_json_key))
+    json_key: ((gcp_service_account_key))
     regexp: multi-branch/features/((feature))/my-app-(.+)\.tgz
 
 - name: staging-env
@@ -36,7 +36,7 @@ resources:
     backend_config:
       bucket: concourse-examples
       prefix: multi-branch/terraform
-      credentials: ((concourse_artifacts_json_key))
+      credentials: ((gcp_service_account_key))
 
 jobs:
 - name: test

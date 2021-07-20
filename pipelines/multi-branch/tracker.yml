@@ -28,7 +28,7 @@ resources:
     backend_config: &terraform_backend_config
       bucket: concourse-examples
       prefix: multi-branch/terraform
-      credentials: ((concourse_artifacts_json_key))
+      credentials: ((gcp_service_account_key))
 
 jobs:
 - name: set-feature-pipelines
