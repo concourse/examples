@@ -1,5 +1,6 @@
 variable "bundle_url" {
-  type = string
+  type    = string
+  default = ""
 }
 
 resource "null_resource" "fake_deployment" {

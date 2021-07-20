@@ -4,6 +4,11 @@ resource_types:
   source:
     repository: aoldershaw/git-branches-resource
 
+- name: terraform
+  type: registry-image
+  source:
+    repository: ljfranklin/terraform-resource
+
 resources:
 - name: feature-branches
   type: git-branches
@@ -15,6 +20,15 @@ resources:
   type: git
   source:
     uri: https://github.com/concourse/examples
+
+- name: staging-env
+  type: terraform
+  source:
+    backend_type: gcs
+    backend_config: &terraform_backend_config
+      bucket: concourse-examples
+      prefix: multi-branch/terraform
+      credentials: ((concourse_artifacts_json_key))
 
 jobs:
 - name: set-feature-pipelines
@@ -35,26 +49,24 @@ jobs:
 
 - name: cleanup-inactive-workspaces
   plan:
-  - get: feature-branches
-    passed: [set-feature-pipelines]
-    trigger: true
-  - load_var: active_branches
-    file: feature-branches/branches.json
-  - task: cleanup
+  - in_parallel:
+    - get: feature-branches
+      passed: [set-feature-pipelines]
+      trigger: true
+    - get: examples
+  - task: find-inactive-workspaces
     config:
       platform: linux
       image_resource:
         type: registry-image
         source: {repository: hashicorp/terraform}
+      inputs:
+      - name: feature-branches
+      outputs:
+      - name: extra-workspaces
       params:
-        ACTIVE_BRANCHES: ((.:active_branches))
         TERRAFORM_BACKEND_CONFIG:
-          terraform:
-            backend:
-              gcs:
-                bucket: concourse-examples
-                prefix: multi-branch/terraform
-                credentials: ((concourse_artifacts_json_key))
+          gcs: *terraform_backend_config
       run:
         path: sh
         args:
@@ -62,22 +74,26 @@ jobs:
         - |
           set -euo pipefail
 
-          apk add jq
+          apk add -q jq
 
-          active_features="$(echo "$ACTIVE_BRANCHES" | jq '[.[].groups.feature]')"
+          active_features="$(jq '[.[].groups.feature]' feature-branches/branches.json)"
 
-          echo "$TERRAFORM_BACKEND_CONFIG" > backend.tf.json
+          jq -n "{terraform: {backend: $TERRAFORM_BACKEND_CONFIG}}" > backend.tf.json
           terraform init
+
+          # List all active workspaces, ignoring the default workspace
           active_workspaces="$(terraform workspace list | grep -v '^[*]' | tr -d ' ' | jq --raw-input --slurp 'split("\n") | map(select(. != ""))')"
 
-          jq -nr "$active_workspaces - $active_features | .[]" | while read extra_workspace
-          do
-            echo "deleting workspace $extra_workspace"
-            terraform workspace select "$extra_workspace"
-            terraform init
-
-            terraform destroy -auto-approve
-
-            terraform workspace select default
-            terraform workspace delete "$extra_workspace"
-          done
+          jq -n "$active_workspaces - $active_features" > extra-workspaces/workspaces.json
+  - load_var: extra_workspaces
+    file: extra-workspaces/workspaces.json
+  - across:
+    - var: workspace
+      values: ((.:extra_workspaces))
+    put: staging-env
+    params:
+      terraform_source: examples/terraform/staging
+      env_name: ((.:workspace))
+      action: destroy
+    get_params:
+      action: destroy
