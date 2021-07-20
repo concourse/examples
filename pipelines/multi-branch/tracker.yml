@@ -14,6 +14,11 @@ resources:
   type: git-branches
   source:
     uri: https://github.com/concourse/examples
+    # The "(?P<name>pattern)" syntax defines a named capture group.
+    # aoldershaw/git-branches-resource emits the value of each named capture
+    # group under the `groups` key.
+    #
+    # e.g. feature/some-feature ==> {"groups": {"feature": "some-feature"}}
     branch_regex: 'feature/(?P<feature>.*)'
 
 - name: examples
