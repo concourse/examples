@@ -18,6 +18,7 @@ jobs:
       trigger: true
     - get: examples
   - task: unit
+    vars: ((golang))
     file: examples/tasks/go-test.yml
     input_mapping: {repo: branch}
     params: {MODULE: apps/golang}
