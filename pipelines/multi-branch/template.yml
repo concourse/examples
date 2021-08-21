@@ -1,14 +1,3 @@
-resource_types:
-- name: terraform
-  type: registry-image
-  source:
-    repository: ljfranklin/terraform-resource
-
-- name: gcs
-  type: registry-image
-  source:
-    repository: frodenas/gcs-resource
-
 resources:
 - name: branch
   type: git
@@ -27,16 +16,6 @@ resources:
     bucket: concourse-examples
     json_key: ((gcp_service_account_key))
     regexp: multi-branch/features/((feature))/my-app-(.+)\.tgz
-
-- name: staging-env
-  type: terraform
-  source:
-    env_name: ((feature))
-    backend_type: gcs
-    backend_config:
-      bucket: concourse-examples
-      prefix: multi-branch/terraform
-      credentials: ((gcp_service_account_key))
 
 jobs:
 - name: test
@@ -63,19 +42,3 @@ jobs:
       MODULE: apps/golang
       BINARY_NAME: my-app
     input_mapping: {repo: branch}
-  - put: build-artifact
-    params: {file: "binary/my-app-*.tgz"}
-
-- name: deploy
-  plan:
-  - in_parallel:
-    - get: build-artifact
-      passed: [build]
-      trigger: true
-    - get: examples
-  - load_var: bundle_url
-    file: build-artifact/url
-  - put: staging-env
-    params:
-      terraform_source: examples/terraform/staging
-      vars: {bundle_url: ((.:bundle_url))}
