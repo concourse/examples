@@ -1,0 +1,78 @@
+#@ def unit_tests():
+name: unit-tests
+plan:
+- get: repo
+  trigger: true
+- task: run-unit-tests
+  config:
+    platform: linux
+    image_resource:
+      type: mock
+      source:
+        mirror_self: true
+    inputs:
+    - name: repo
+    run:
+      path: sh
+      args:
+      - -c
+      - |
+        echo running the unit tests...
+        cat repo/branch.txt
+        sleep 4
+        echo tests passed!
+#@ end
+
+#@ def build_rc_image():
+name: build-image
+plan:
+- get: repo
+  trigger: true
+  passed: [unit-tests]
+- task: build-image
+  config:
+    platform: linux
+    image_resource:
+      type: mock
+      source:
+        mirror_self: true
+    inputs:
+    - name: repo
+    outputs:
+    - name: image
+    run:
+      path: sh
+      args:
+      - -c
+      - |
+        echo building the image...
+        date +%Y-%m-%d > image/version
+        sleep 2
+        echo image built!
+- put: image-rc
+  params:
+    file: image/version
+#@ end
+
+#@ def deploy(deployment_env):
+name: #@ "deploy-" + deployment_env
+plan:
+- in_parallel:
+  - get: repo
+    passed:
+    #@ if deployment_env == "dev":
+    - build-image
+    #@ elif deployment_env == "prod":
+    - deploy-dev
+    #@ end
+  - get: image-rc
+    passed:
+    #@ if deployment_env == "dev":
+    - build-image
+    #@ elif deployment_env == "prod":
+    - deploy-dev
+    #@ end
+- put: #@ deployment_env + "-env"
+  params:
+    file: image-rc/oci_image
+#@ end

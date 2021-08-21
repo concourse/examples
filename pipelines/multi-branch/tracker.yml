@@ -1,0 +1,104 @@
+resource_types:
+- name: git-branches
+  type: registry-image
+  source:
+    repository: aoldershaw/git-branches-resource
+
+- name: terraform
+  type: registry-image
+  source:
+    repository: ljfranklin/terraform-resource
+
+resources:
+- name: feature-branches
+  type: git-branches
+  source:
+    uri: https://github.com/concourse/examples
+    # The "(?P<name>pattern)" syntax defines a named capture group.
+    # aoldershaw/git-branches-resource emits the value of each named capture
+    # group under the `groups` key.
+    #
+    # e.g. feature/some-feature ==> {"groups": {"feature": "some-feature"}}
+    branch_regex: 'feature/(?P<feature>.*)'
+
+- name: examples
+  type: git
+  source:
+    uri: https://github.com/concourse/examples
+
+- name: staging-env
+  type: terraform
+  source:
+    backend_type: gcs
+    backend_config: &terraform_backend_config
+      bucket: concourse-examples
+      prefix: multi-branch/terraform
+      credentials: ((gcp_service_account_key))
+
+jobs:
+- name: set-feature-pipelines
+  plan:
+  - in_parallel:
+    - get: feature-branches
+      trigger: true
+    - get: examples
+  - load_var: branches
+    file: feature-branches/branches.json
+  - across:
+    - var: branch
+      values: ((.:branches))
+    set_pipeline: dev
+    file: examples/pipelines/multi-branch/template.yml
+    instance_vars: {feature: ((.:branch.groups.feature))}
+    vars: {branch: ((.:branch.name))}
+
+- name: cleanup-inactive-workspaces
+  plan:
+  - in_parallel:
+    - get: feature-branches
+      passed: [set-feature-pipelines]
+      trigger: true
+    - get: examples
+  - task: find-inactive-workspaces
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source: {repository: hashicorp/terraform}
+      inputs:
+      - name: feature-branches
+      outputs:
+      - name: extra-workspaces
+      params:
+        TERRAFORM_BACKEND_CONFIG:
+          gcs: *terraform_backend_config
+      run:
+        path: sh
+        args:
+        - -c
+        - |
+          set -euo pipefail
+
+          apk add -q jq
+
+          active_features="$(jq '[.[].groups.feature]' feature-branches/branches.json)"
+
+          jq -n "{terraform: {backend: $TERRAFORM_BACKEND_CONFIG}}" > backend.tf.json
+          terraform init
+
+          # List all active workspaces, ignoring the default workspace
+          active_workspaces="$(terraform workspace list | grep -v '^[*]' | tr -d ' ' | jq --raw-input --slurp 'split("\n") | map(select(. != ""))')"
+
+          jq -n "$active_workspaces - $active_features" > extra-workspaces/workspaces.json
+  - load_var: extra_workspaces
+    file: extra-workspaces/workspaces.json
+  - across:
+    - var: workspace
+      values: ((.:extra_workspaces))
+    put: staging-env
+    params:
+      terraform_source: examples/terraform/staging
+      env_name: ((.:workspace))
+      action: destroy
+    get_params:
+      action: destroy

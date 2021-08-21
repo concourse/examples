@@ -1,0 +1,81 @@
+resource_types:
+- name: terraform
+  type: registry-image
+  source:
+    repository: ljfranklin/terraform-resource
+
+- name: gcs
+  type: registry-image
+  source:
+    repository: frodenas/gcs-resource
+
+resources:
+- name: branch
+  type: git
+  source:
+    uri: https://github.com/concourse/examples
+    branch: ((branch))
+
+- name: examples
+  type: git
+  source:
+    uri: https://github.com/concourse/examples
+
+- name: build-artifact
+  type: gcs
+  source:
+    bucket: concourse-examples
+    json_key: ((gcp_service_account_key))
+    regexp: multi-branch/features/((feature))/my-app-(.+)\.tgz
+
+- name: staging-env
+  type: terraform
+  source:
+    env_name: ((feature))
+    backend_type: gcs
+    backend_config:
+      bucket: concourse-examples
+      prefix: multi-branch/terraform
+      credentials: ((gcp_service_account_key))
+
+jobs:
+- name: test
+  plan:
+  - in_parallel:
+    - get: branch
+      trigger: true
+    - get: examples
+  - task: unit
+    file: examples/tasks/go-test.yml
+    input_mapping: {repo: branch}
+    params: {MODULE: apps/golang}
+
+- name: build
+  plan:
+  - in_parallel:
+    - get: branch
+      passed: [test]
+      trigger: true
+    - get: examples
+  - task: build
+    file: examples/tasks/go-build.yml
+    params:
+      MODULE: apps/golang
+      BINARY_NAME: my-app
+    input_mapping: {repo: branch}
+  - put: build-artifact
+    params: {file: "binary/my-app-*.tgz"}
+
+- name: deploy
+  plan:
+  - in_parallel:
+    - get: build-artifact
+      passed: [build]
+      trigger: true
+    - get: examples
+  - load_var: bundle_url
+    file: build-artifact/url
+  - put: staging-env
+    params:
+      terraform_source: examples/terraform/staging
+      vars: {bundle_url: ((.:bundle_url))}

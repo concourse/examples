@@ -1,0 +1,19 @@
+#@ load("@ytt:data", "data")
+#@ load("jobs.lib.yml", "unit_tests", "build_rc_image", "deploy")
+#@ load("resources.lib.yml", "resources")
+
+jobs:
+- #@ unit_tests()
+- #@ build_rc_image()
+- #@ deploy("dev")
+- #@ deploy("prod")
+
+resources: #@ resources(data.values.branch_name, data.values.artifact_slug)
+
+#! TODO: temp fix to ensure usage of the latest mock resource
+resource_types:
+- name: mock
+  type: registry-image
+  source:
+    repository: concourse/mock-resource
+
