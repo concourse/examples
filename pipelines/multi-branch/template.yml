@@ -25,7 +25,7 @@ jobs:
 - name: build
   plan:
   - in_parallel:
-    - get: branchhhh
+    - get: branch
       passed: [test]
       trigger: true
     - get: examples
