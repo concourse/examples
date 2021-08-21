@@ -10,13 +10,6 @@ resources:
   source:
     uri: https://github.com/jutkko/examples
 
-- name: build-artifact
-  type: gcs
-  source:
-    bucket: concourse-examples
-    json_key: ((gcp_service_account_key))
-    regexp: multi-branch/features/((feature))/my-app-(.+)\.tgz
-
 jobs:
 - name: test
   plan:
