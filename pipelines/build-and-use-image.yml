@@ -8,19 +8,8 @@ resources:
     uri: https://github.com/concourse/examples.git
     branch: master
 
-# Where we will push the image
-- name: simple-image
-  type: registry-image
-  icon: docker
-  source:
-    # You need to provide these variables when
-    # setting the pipeline
-    repository: ((image-repo-name))/simple-image
-    username: ((registry-username))
-    password: ((registry-password))
-
 jobs:
-- name: build-and-push
+- name: build-and-use-image
   plan:
   - get: concourse-examples
   - task: build-task-image
@@ -42,6 +31,10 @@ jobs:
         UNPACK_ROOTFS: "true" # only needed if using image in a future step
       run:
         path: build
-  - put: simple-image
-    params:
-      image: image/image.tar
+  - task: use-built-image-in-task
+    image: image
+    config:
+      platform: linux
+      run:
+        path: cat
+        args: ["/stranger"]
