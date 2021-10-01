@@ -5,5 +5,5 @@ image_resource:
   source: { mirror_self: true }
 
 run:
-  path: echo
-  args: ["Hello world!"]
+  path: date
+  args: ["+%Y-%m-%d"]
