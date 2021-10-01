@@ -1,2 +1,2 @@
 # examples
-Examples of Concourse workflows of pipelines
+Examples of Concourse workflows of pipelines for testings
