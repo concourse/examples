@@ -13,7 +13,7 @@ resources:
 - name: feature-branches
   type: git-branches
   source:
-    uri: https://github.com/concourse/examples
+    uri: https://github.com/uempfel/examples
     # The "(?P<name>pattern)" syntax defines a named capture group.
     # aoldershaw/git-branches-resource emits the value of each named capture
     # group under the `groups` key.
@@ -24,7 +24,7 @@ resources:
 - name: examples
   type: git
   source:
-    uri: https://github.com/concourse/examples
+    uri: https://github.com/uempfel/examples
 
 - name: staging-env
   type: terraform
