@@ -13,13 +13,13 @@ resources:
 - name: branch
   type: git
   source:
-    uri: https://github.com/concourse/examples
+    uri: https://github.com/uempfel/examples
     branch: ((branch))
 
 - name: examples
   type: git
   source:
-    uri: https://github.com/concourse/examples
+    uri: https://github.com/uempfel/examples
 
 - name: build-artifact
   type: gcs
