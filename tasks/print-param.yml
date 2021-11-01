@@ -5,11 +5,11 @@ image_resource:
   source: { mirror_self: true }
 
 params:
-  MY_VAR: ((my-var))
+  ECHO_ME: "default text to echo from task config file"
 
 run:
   path: sh
   args:
   - -c
   - |
-    echo ${MY_VAR} and ((second-var))
+    echo ${ECHO_ME}
