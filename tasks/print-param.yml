@@ -6,10 +6,11 @@ image_resource:
 
 params:
   ECHO_ME: "default text to echo from task config file"
+  ALSO_ME:
 
 run:
   path: sh
   args:
   - -c
   - |
-    echo ${ECHO_ME}
+    echo ${ECHO_ME} and ${ALSO_ME}
