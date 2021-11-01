@@ -8,5 +8,8 @@ params:
   ECHO_ME: "default text to echo from task config file"
 
 run:
-  path: echo
-  args: ["Echo var: ${ECHO_ME}"]
+  path: sh
+  args:
+  - cx
+  - |
+    echo "var: ${ECHO_ME}"
