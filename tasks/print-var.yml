@@ -10,6 +10,6 @@ params:
 run:
   path: sh
   args:
-  - -cx
+  - -c
   - |
-    echo "var: ${ECHO_ME}"
+    echo ${ECHO_ME}
