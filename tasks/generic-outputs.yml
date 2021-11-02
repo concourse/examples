@@ -1,0 +1,18 @@
+platform: linux
+image_resource:
+  type: mock
+  source: {mirror_self: true}
+
+outputs:
+- name: main
+- name: dev
+- name: ci
+
+run:
+  path: sh
+  args:
+  - -c
+  - |
+    echo "hello-world" > main/version
+    echo "hey there dev" > dev/version
+    echo "hi ci" > ci/version
