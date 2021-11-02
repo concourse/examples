@@ -13,6 +13,8 @@ run:
   args:
   - -c
   - |
+    ls -lah
+    echo "creating versions"
     echo "hello-world" > main/version
     echo "hey there dev" > dev/version
     echo "hi ci" > ci/version
