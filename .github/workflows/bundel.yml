@@ -10,10 +10,10 @@ jobs:
   bundlecheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: web3@1.6.1
+      - uses: actions/checkout@v1
       - uses: carlesnunez/check-my-bundlephobia@v1
         with:
-          repo-token: ${{ secrets.BUNDEL_TOKEN }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           strict: true
           threshold: 500
           ignore-dev-dependencies: true
