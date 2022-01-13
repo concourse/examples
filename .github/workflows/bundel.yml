@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: docker-parse-image@3.0.1
+      - uses: carlesnunez/check-my-bundlephobia@f9e1c2301e91bfce6fae47bbdd59b2d0f41d9b49
         with:
           repo-token: ${{ secrets.SECRET_TOKEN }}
           strict: true
