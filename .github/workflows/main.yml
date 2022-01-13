@@ -21,3 +21,7 @@ jobs:
           urls: 'https://www.foo.software,https://www.foo.software/contact'
           sha: ${{ github.sha }}
           slackWebhookUrl: ${{ secrets.LIGHTHOUSE_CHECK_WEBHOOK_URL }}
+          
+          
+          
+          
