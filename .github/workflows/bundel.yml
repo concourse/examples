@@ -10,7 +10,7 @@ jobs:
   bundlecheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: web3@1.6.1
       - uses: carlesnunez/check-my-bundlephobia@v1
         with:
           repo-token: ${{ secrets.BUNDEL_TOKEN }}
