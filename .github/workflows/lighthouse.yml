@@ -1,6 +1,7 @@
 name: Test Lighthouse Check
 on: [pull_request]
 
+
 jobs:
   lighthouse-check:
     runs-on: ubuntu-latest
