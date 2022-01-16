@@ -10,10 +10,15 @@ jobs:
     - name: Run Lighthouse
       uses: foo-software/lighthouse-check-action@master
       with:
-        outputDirectory: /tmp/artifacts
-        urls: 'https://www.foo.software,https://www.foo.software/contact'
-    - name: Upload artifacts
-      uses: actions/upload-artifact@master
-      with:
-        name: Lighthouse reports
-        path: /tmp/artifacts
+          awsAccessKeyId: ${{ secrets.LIGHTHOUSE_CHECK_AWS_ACCESS_KEY_ID }}
+          awsBucket: ${{ secrets.LIGHTHOUSE_CHECK_AWS_BUCKET }}
+          awsRegion: ${{ secrets.LIGHTHOUSE_CHECK_AWS_REGION }}
+          awsSecretAccessKey: ${{ secrets.LIGHTHOUSE_CHECK_AWS_SECRET_ACCESS_KEY }}
+          gitAuthor: ${{ github.actor }}
+          gitBranch: ${{ github.ref }}
+          gitHubAccessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
+          outputDirectory: /tmp/artifacts
+          urls: 'https://www.foo.software,https://www.foo.software/contact'
+          sha: ${{ github.sha }}
+          slackWebhookUrl: ${{ secrets.LIGHTHOUSE_CHECK_WEBHOOK_URL }} 
+        
