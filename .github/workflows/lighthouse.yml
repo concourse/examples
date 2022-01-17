@@ -1,25 +1,17 @@
-name: Lighthouse Check
-on: [push]
 
-
+name: Lighthouse CI
+on: push
 jobs:
-  lighthouse-check:
+  lighthouse:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - run: mkdir /tmp/artifacts
-    - name: Run Lighthouse
-      uses: foo-software/lighthouse-check-action@master
-      with:
-          awsAccessKeyId: ${{ secrets.LIGHTHOUSE_CHECK_AWS_ACCESS_KEY_ID }}
-          awsBucket: ${{ secrets.LIGHTHOUSE_CHECK_AWS_BUCKET }}
-          awsRegion: ${{ secrets.LIGHTHOUSE_CHECK_AWS_REGION }}
-          awsSecretAccessKey: ${{ secrets.LIGHTHOUSE_CHECK_AWS_SECRET_ACCESS_KEY }}
-          gitAuthor: ${{ github.actor }}
-          gitBranch: ${{ github.ref }}
-          gitHubAccessToken: ${{ secrets.LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN }}
-          outputDirectory: /tmp/artifacts
-          urls: 'https://www.foo.software,https://www.foo.software/contact'
-          sha: ${{ github.sha }}
-          slackWebhookUrl: ${{ secrets.LIGHTHOUSE_CHECK_WEBHOOK_URL }} 
-        
+      - uses: actions/checkout@v2
+      - name: Audit URLs using Lighthouse
+        uses: treosh/lighthouse-ci-action@v8
+        with:
+          urls: |
+            https://www.echobitzit.com/
+            https://www.echobitzit.com/web/login
+          budgetPath: ./budget.json # test performance budgets
+          uploadArtifacts: true # save results as an action artifacts
+          temporaryPublicStorage: true # upload lighthouse report to the temporary
