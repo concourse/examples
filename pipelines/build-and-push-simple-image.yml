@@ -16,7 +16,6 @@ resources:
     # You need to provide these variables when
     # setting the pipeline
     repository: ((image-repo-name))/simple-image
-    tag: 1
     #username: ((registry-username))
     #password: ((registry-password))
 
@@ -41,6 +40,7 @@ jobs:
       params:
         CONTEXT: concourse-examples/Dockerfiles/simple
         UNPACK_ROOTFS: "true" # only needed if using image in a future step
+        version: 1
       run:
         path: build
   - put: simple-image
