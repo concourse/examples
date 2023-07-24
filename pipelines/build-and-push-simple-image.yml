@@ -45,4 +45,4 @@ jobs:
   - put: simple-image
     params:
       image: image/image.tar
-      tag_as_latest: true
+      version: 1
