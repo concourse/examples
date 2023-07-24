@@ -40,7 +40,7 @@ jobs:
       params:
         CONTEXT: concourse-examples/Dockerfiles/simple
         UNPACK_ROOTFS: "true" # only needed if using image in a future step
-        version: 1
+        tag_as_latest: true
       run:
         path: build
   - put: simple-image
