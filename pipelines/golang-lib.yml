@@ -23,11 +23,6 @@ resources:
 
 task-config: &task-config
   platform: linux
-  inputs:
-    - name: golang-mock-git
-      path: go/src/github.com/golang/mock
-  params:
-    GO111MODULE: "on"
   run:
     path: /bin/sh
     args:
@@ -41,8 +36,6 @@ jobs:
 - name: golang-1.20
   public: true
   plan:
-    - get: golang-mock-git
-      trigger: true
     - get: golang-1.20.x-image
       trigger: true
     - task: run-tests
@@ -53,8 +46,6 @@ jobs:
 - name: golang-1.21
   public: true
   plan:
-    - get: golang-mock-git
-      trigger: true
     - get: golang-1.21.x-image
       trigger: true
     - task: run-tests
@@ -65,8 +56,6 @@ jobs:
 - name: golang-1.22
   public: true
   plan:
-    - get: golang-mock-git
-      trigger: true
     - get: golang-1.22.x-image
       trigger: true
     - task: run-tests
