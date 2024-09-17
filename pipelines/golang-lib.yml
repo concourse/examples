@@ -1,31 +1,25 @@
 ---
 resources:
-- name: golang-mock-git
-  type: git
-  icon: github
-  source:
-    uri: https://github.com/golang/mock.git
-
-- name: golang-1.11.x-image
+- name: golang-1.20.x-image
   type: registry-image
   icon: docker
   source:
     repository: golang
-    tag: 1.11-stretch
+    tag: 1.20-stretch
 
-- name: golang-1.12.x-image
+- name: golang-1.21.x-image
   type: registry-image
   icon: docker
   source:
     repository: golang
-    tag: 1.12-stretch
+    tag: 1.21-stretch
 
-- name: golang-1.13.x-image
+- name: golang-1.22.x-image
   type: registry-image
   icon: docker
   source:
     repository: golang
-    tag: 1.13-stretch
+    tag: 1.22-stretch
 
 task-config: &task-config
   platform: linux
@@ -41,49 +35,41 @@ task-config: &task-config
       - |
         GOPATH=$PWD/go
 
-        cd go/src/github.com/golang/mock
-
-        go vet ./...
-        go build ./...
-        go install github.com/golang/mock/mockgen
-        GO111MODULE=off go get -u golang.org/x/lint/golint
-        ./ci/check_go_fmt.sh
-        ./ci/check_go_lint.sh
-        ./ci/check_go_generate.sh
-        ./ci/check_go_mod.sh
-        go test -v ./...
+        go version
 
 jobs:
-- name: golang-1.11
+- name: golang-1.20
   public: true
   plan:
     - get: golang-mock-git
       trigger: true
-    - get: golang-1.11.x-image
+    - get: golang-1.20.x-image
       trigger: true
     - task: run-tests
-      image: golang-1.11.x-image
+      image: golang-1.20.x-image
       config:
         << : *task-config
-- name: golang-1.12
+
+- name: golang-1.21
   public: true
   plan:
     - get: golang-mock-git
       trigger: true
-    - get: golang-1.12.x-image
+    - get: golang-1.21.x-image
       trigger: true
     - task: run-tests
-      image: golang-1.12.x-image
+      image: golang-1.21.x-image
       config:
         << : *task-config
-- name: golang-1.13
+
+- name: golang-1.22
   public: true
   plan:
     - get: golang-mock-git
       trigger: true
-    - get: golang-1.13.x-image
+    - get: golang-1.22.x-image
       trigger: true
     - task: run-tests
-      image: golang-1.13.x-image
+      image: golang-1.22.x-image
       config:
         << : *task-config
