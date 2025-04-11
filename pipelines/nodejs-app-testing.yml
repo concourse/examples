@@ -11,7 +11,7 @@ resources:
   icon: docker
   source:
     repository: node
-    tag: 22
+    tag: 22-slim
 
 jobs:
 - name: test
