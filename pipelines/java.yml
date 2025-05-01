@@ -1,9 +1,9 @@
 resources:
-- icon: github
-  name: apache-kafka-git
+- name: apache-kafka-git
+  type: git
+  icon: github
   source:
     uri: https://github.com/apache/kafka.git
-  type: git
 
 jobs:
 - name: test
