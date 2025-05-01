@@ -33,4 +33,4 @@ jobs:
           - |
             cd apache-kafka-git
 
-            ./gradlew test
+            ./gradlew unitTest
