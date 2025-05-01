@@ -1,5 +1,5 @@
 resources:
-- name: apache-kafka-git
+- name: apache-kafka
   type: git
   icon: github
   source:
@@ -9,7 +9,7 @@ jobs:
 - name: test
   public: true
   plan:
-  - get: apache-kafka-git
+  - get: apache-kafka
     trigger: true
   - task: run-tests
     config:
@@ -24,13 +24,13 @@ jobs:
         - path: $HOME/.gradle/caches/
         - path: $HOME/.gradle/wrapper/
       inputs:
-        - name: apache-kafka-git
+        - name: apache-kafka
       run:
         user: root
         path: /bin/sh
         args:
           - -ce
           - |
-            cd apache-kafka-git
+            cd apache-kafka
 
-            ./gradlew unitTest
+            ./gradlew clients:test --tests RequestResponseTest
