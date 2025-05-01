@@ -11,6 +11,8 @@ jobs:
 # update this pipeline before updating child pipelines
 - name: set-self
   public: true
+  build_log_retention:
+    builds: 50
   plan:
   - get: concourse-examples
     trigger: true
@@ -19,6 +21,8 @@ jobs:
 
 - name: set-example-pipelines
   public: true
+  build_log_retention:
+    builds: 50
   plan:
   - get: concourse-examples
     trigger: true
@@ -76,6 +80,8 @@ jobs:
 
 - name: set-rendered-pipelines
   public: true
+  build_log_retention:
+    builds: 50
   plan:
   - get: concourse-examples
     trigger: true

@@ -1,5 +1,7 @@
 #@ def unit_tests():
 name: unit-tests
+build_log_retention:
+  builds: 50
 plan:
 - get: repo
   trigger: true
@@ -25,6 +27,8 @@ plan:
 
 #@ def build_rc_image():
 name: build-image
+build_log_retention:
+  builds: 50
 plan:
 - get: repo
   trigger: true

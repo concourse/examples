@@ -37,6 +37,8 @@ resources:
 
 jobs:
 - name: set-feature-pipelines
+  build_log_retention:
+    builds: 50
   plan:
   - in_parallel:
     - get: feature-branches
@@ -53,6 +55,8 @@ jobs:
     vars: {branch: ((.:branch.name))}
 
 - name: cleanup-inactive-workspaces
+  build_log_retention:
+    builds: 50
   plan:
   - in_parallel:
     - get: feature-branches
