@@ -16,8 +16,8 @@ resources:
     # You need to provide these variables when
     # setting the pipeline
     repository: ((image-repo-name))/simple-image
-    username: ((registry-username))
-    password: ((registry-password))
+    #username: ((registry-username))
+    #password: ((registry-password))
 
 jobs:
 - name: build-and-push
@@ -45,3 +45,4 @@ jobs:
   - put: simple-image
     params:
       image: image/image.tar
+      version: 1
