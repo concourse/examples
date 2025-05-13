@@ -22,27 +22,18 @@ jobs:
   - get: node-image
   - get: repo
     trigger: true
-  - task: install
-    image: node-image
-    config:
-      inputs:
-      - name: repo
-      outputs:
-      - name: workspace
-        path: repo
-      platform: linux
-      run:
-        path: npm
-        args: ["ci", "--no-audit", "--no-fund"]
-        dir: repo
   - task: test
     image: node-image
     config:
       inputs:
-      - name: workspace
-        path: repo
+      - name: repo
       platform: linux
       run:
-        path: npm
-        args: ["run", "test"]
+        path: bash
         dir: repo
+        args:
+          - -cx
+          - |
+            npm install -g pnpm
+            pnpm install --frozen-lockfile
+            pnpm run test
