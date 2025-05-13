@@ -32,7 +32,7 @@ jobs:
         path: bash
         dir: repo
         args:
-          - -cx
+          - -cex
           - |
             npm install -g pnpm
             pnpm install --frozen-lockfile
