@@ -1,0 +1,7 @@
+[package]
+name = "addsix"
+version = "0.1.0"
+edition = "2024"
+description = "A simple CLI tool that adds 6 to a number"
+
+[dependencies]
