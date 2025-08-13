@@ -1,40 +1,40 @@
 ---
 resources:
-# The repo with our Dockerfile
-- name: concourse-examples
-  type: git
-  icon: github
-  source:
-    uri: https://github.com/concourse/examples.git
-    branch: master
+  # The repo with our Dockerfile
+  - name: concourse-examples
+    type: git
+    icon: github
+    source:
+      uri: https://github.com/concourse/examples.git
+      branch: main
 
 jobs:
-- name: build-and-use-image
-  plan:
-  - get: concourse-examples
-  - task: build-task-image
-    privileged: true
-    config:
-      platform: linux
-      image_resource:
-        type: registry-image
-        source:
-          # Check out the README for oci-build-task at
-          # https://github.com/concourse/oci-build-task
-          repository: concourse/oci-build-task
-      inputs:
-      - name: concourse-examples
-      outputs:
-      - name: image
-      params:
-        CONTEXT: concourse-examples/Dockerfiles/simple
-        UNPACK_ROOTFS: "true" # only needed if using image in a future step
-      run:
-        path: build
-  - task: use-built-image-in-task
-    image: image
-    config:
-      platform: linux
-      run:
-        path: cat
-        args: ["/stranger"]
+  - name: build-and-use-image
+    plan:
+      - get: concourse-examples
+      - task: build-task-image
+        privileged: true
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              # Check out the README for oci-build-task at
+              # https://github.com/concourse/oci-build-task
+              repository: concourse/oci-build-task
+          inputs:
+            - name: concourse-examples
+          outputs:
+            - name: image
+          params:
+            CONTEXT: concourse-examples/Dockerfiles/simple
+            UNPACK_ROOTFS: "true" # only needed if using image in a future step
+          run:
+            path: build
+      - task: use-built-image-in-task
+        image: image
+        config:
+          platform: linux
+          run:
+            path: cat
+            args: ["/stranger"]
