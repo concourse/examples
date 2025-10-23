@@ -6,6 +6,7 @@ resources:
   check_every: 30m
   source:
     uri: https://github.com/concourse/examples
+    branch: training
 
 jobs:
 # updates this pipeline before updating child pipelines
