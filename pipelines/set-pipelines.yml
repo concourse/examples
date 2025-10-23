@@ -8,11 +8,8 @@ resources:
     uri: https://github.com/concourse/examples
 
 jobs:
-# update this pipeline before updating child pipelines
+# updates this pipeline before updating child pipelines
 - name: set-self
-  public: true
-  build_log_retention:
-    builds: 50
   plan:
   - get: concourse-examples
     trigger: true
@@ -20,9 +17,6 @@ jobs:
     file: concourse-examples/pipelines/set-pipelines.yml
 
 - name: set-example-pipelines
-  public: true
-  build_log_retention:
-    builds: 50
   plan:
   - get: concourse-examples
     trigger: true
@@ -79,9 +73,6 @@ jobs:
     file: concourse-examples/pipelines/java.yml
 
 - name: set-rendered-pipelines
-  public: true
-  build_log_retention:
-    builds: 50
   plan:
   - get: concourse-examples
     trigger: true
@@ -90,18 +81,19 @@ jobs:
     config:
       platform: linux
       image_resource:
-        type: registry-image
+        type: mock
         source:
-          repository: taylorsilva/carvel-ytt
+          mirror_self: true
       inputs:
       - name: concourse-examples
       outputs:
       - name: pipeline
       run:
-        path: sh
+        path: bash
         args:
         - -cx
         - |
+          apk add --no-progress --quiet ytt
           ytt -f ./concourse-examples/pipelines/templates/simple > hello-world-rendered.yml
           ytt -f ./concourse-examples/pipelines/templates/multiple-files > multi-files-rendered.yml
           mv *.yml ./pipeline/
