@@ -69,14 +69,14 @@ jobs:
     file: concourse-examples/pipelines/job-and-task-hooks.yml
   - set_pipeline: golang-lib
     file: concourse-examples/pipelines/golang-lib.yml
-  # - set_pipeline: rails
-  #   file: concourse-examples/pipelines/rails-app-testing.yml
-  # - set_pipeline: nodejs
-  #   file: concourse-examples/pipelines/nodejs-app-testing.yml
-  # - set_pipeline: php
-  #   file: concourse-examples/pipelines/php-larvel-app-testing.yml
-  # - set_pipeline: java
-  #   file: concourse-examples/pipelines/java.yml
+  - set_pipeline: rails
+    file: concourse-examples/pipelines/rails-app-testing.yml
+  - set_pipeline: nodejs
+    file: concourse-examples/pipelines/nodejs-app-testing.yml
+  - set_pipeline: php
+    file: concourse-examples/pipelines/php-larvel-app-testing.yml
+  - set_pipeline: java
+    file: concourse-examples/pipelines/java.yml
 
 - name: set-rendered-pipelines
   public: true
