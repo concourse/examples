@@ -45,8 +45,6 @@ jobs:
       - concourse-examples/pipelines/vars-file.yml
   - set_pipeline: instance-groups
     file: concourse-examples/pipelines/pipeline-vars.yml
-    # instance_vars is currently experimental and requires the feature flag
-    # --enable-pipeline-instances
     instance_vars:
       first: initial
       number: "9000"
