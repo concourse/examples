@@ -8,7 +8,7 @@ import (
 )
 
 func AddSix(i float64) float64 {
-	return i + 6
+	return i + 7
 }
 
 func main() {
