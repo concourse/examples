@@ -59,6 +59,8 @@ jobs:
     file: concourse-examples/pipelines/multi-branch/parent.yml
     instance_vars:
       branch: main
+    vars:
+      instance_pipeline_name: multi-branch
   - set_pipeline: task-passing-artifact
     file: concourse-examples/pipelines/task-passing-artifact.yml
   - set_pipeline: time-triggered
