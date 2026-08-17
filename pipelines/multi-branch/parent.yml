@@ -23,7 +23,8 @@ resources:
     uri: https://github.com/concourse/examples
 
 jobs:
-- name: set-pipelines
+- name: set-feature-pipelines
+  old_name: set-pipelines
   plan:
   - in_parallel:
     - get: branches
