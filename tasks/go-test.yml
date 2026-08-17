@@ -6,7 +6,6 @@ image_resource:
 
 inputs:
 - name: repo
-  path: .
 
 params:
   MODULE:
@@ -16,5 +15,5 @@ run:
   args:
   - -ce
   - |
-    cd "$MODULE"
+    cd "repo/${MODULE}"
     go test -v ./...

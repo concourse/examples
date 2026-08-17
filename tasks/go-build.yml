@@ -6,7 +6,6 @@ image_resource:
 
 inputs:
 - name: repo
-  path: .
 
 outputs:
 - name: binary
@@ -18,11 +17,11 @@ params:
 run:
   path: sh
   args:
-  - -ce
+  - -cex
   - |
     root=$(pwd)
-    cd "$MODULE"
-    go build -o "/tmp/$BINARY_NAME"
+    cd "repo/${MODULE}"
+    go build -o "/${root}/binary/${BINARY_NAME}"
 
     timestamp=$(date '+%Y%m%d%H%M%S')
-    tar czf "$root/binary/$BINARY_NAME-$timestamp.tgz" -C /tmp "$BINARY_NAME"
+    tar czf "$root/binary/$BINARY_NAME-$timestamp.tgz" "/${root}/binary/${BINARY_NAME}"
