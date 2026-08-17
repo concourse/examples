@@ -35,7 +35,7 @@ jobs:
     file: branches/branches.json
 
   - across:
-    # creates the ((.:branch)) var
+    # creates the ((.:branch)) var, set to the value of one branch
     - var: branch
       values: ((.:branches))
     do:
