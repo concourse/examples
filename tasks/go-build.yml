@@ -21,7 +21,7 @@ run:
   - |
     root=$(pwd)
     cd "repo/${MODULE}"
-    go build -o "/${root}/binary/${BINARY_NAME}"
+    go build -o "${root}/binary/${BINARY_NAME}"
 
     timestamp=$(date '+%Y%m%d%H%M%S')
-    tar czf "$root/binary/$BINARY_NAME-$timestamp.tgz" "/${root}/binary/${BINARY_NAME}"
+    tar czf "$root/binary/$BINARY_NAME-$timestamp.tgz" "${root}/binary/${BINARY_NAME}"
