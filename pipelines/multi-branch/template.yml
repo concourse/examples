@@ -39,17 +39,5 @@ jobs:
       BINARY_NAME: ascii-banner
   - task: run-binary
     image: golang
-    config:
-      platform: linux
-      inputs:
-        - name: binary
-      run:
-        path: sh
-        args:
-          - -cex
-          - |
-            ./binary/ascii-banner -list
-            ./binary/ascii-banner concourse
-            ./binary/ascii-banner plane
-            ./binary/ascii-banner pilot
+    file: repo/apps/golang/binary-test.yml
   # Could then upload the tgz file somewhere like S3

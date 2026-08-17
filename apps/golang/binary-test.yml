@@ -1,0 +1,18 @@
+platform: linux
+
+image_resource:
+  type: mock
+  source: {mirror_self: true}
+
+inputs:
+  - name: binary
+
+run:
+  path: sh
+  args:
+    - -cex
+    - |
+      ./binary/ascii-banner -list
+      ./binary/ascii-banner concourse
+      ./binary/ascii-banner plane
+      ./binary/ascii-banner pilot
