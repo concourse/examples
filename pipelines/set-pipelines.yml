@@ -56,7 +56,7 @@ jobs:
       number: "3000"
       hello: WALLY-E
   - set_pipeline: multi-branch
-    file: repo/pipelines/multi-branch/parent.yml
+    file: concourse-examples/pipelines/multi-branch/parent.yml
     instance_vars:
       branch: main
   - set_pipeline: task-passing-artifact
