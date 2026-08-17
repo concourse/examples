@@ -1,0 +1,37 @@
+resources:
+- name: branches
+  type: git
+  source:
+    version_type: branches
+    uri: https://github.com/concourse/examples
+    # Could use branch_regex instead if you want
+    branch_filters:
+      - feat/*
+      - feature/*
+
+- name: repo
+  type: git
+  source:
+    uri: https://github.com/concourse/examples
+
+jobs:
+  - name: set-pipelines
+    plan:
+      - in_parallel:
+        - get: branches
+          trigger: true
+        - get: repo
+
+      # creates the ((.:branches)) var
+      - load_var: branches
+        file: branches/branches.json
+
+      - across:
+          # creates the ((.:branch)) var
+          - var: branch
+            values: ((.:branches))
+        do:
+          - set_pipeline: multi-branch
+            file: repo/pipelines/multi-branch/template.yml
+            instance_vars:
+              branch: ((.:branch))

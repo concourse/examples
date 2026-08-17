@@ -55,6 +55,10 @@ jobs:
       first: second
       number: "3000"
       hello: WALLY-E
+  - set_pipeline: multi-branch
+    file: repo/pipelines/multi-branch/parent.yml
+    instance_vars:
+      branch: main
   - set_pipeline: task-passing-artifact
     file: concourse-examples/pipelines/task-passing-artifact.yml
   - set_pipeline: time-triggered
