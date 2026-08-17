@@ -1,6 +1,7 @@
 resources:
 - name: repo
   type: git
+  check_every: 30m
   source:
     uri: https://github.com/concourse/examples
     branch: ((branch))
