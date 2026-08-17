@@ -84,8 +84,16 @@ var images = map[string]string{
 ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿`,
 }
 
+// colors maps a color name to its ANSI SGR foreground code.
+var colors = map[string]string{
+	"red":   "31",
+	"green": "32",
+	"blue":  "34",
+}
+
 func main() {
 	list := flag.Bool("list", false, "list the available banner words and exit")
+	color := flag.String("color", "", "print the banner in a color: red, green, or blue")
 	flag.Usage = usage
 	flag.Parse()
 
@@ -109,7 +117,25 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println(art)
+	out, err := colorize(art, *color)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "banner: %v\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Println(out)
+}
+
+func colorize(art, color string) (string, error) {
+	color = strings.ToLower(strings.TrimSpace(color))
+	if color == "" {
+		return art, nil
+	}
+	code, ok := colors[color]
+	if !ok {
+		return "", fmt.Errorf("unknown color %q (want red, green, or blue)", color)
+	}
+	return "\x1b[" + code + "m" + art + "\x1b[0m", nil
 }
 
 // lookup finds the art for a word
@@ -133,7 +159,7 @@ func names() []string {
 
 func usage() {
 	prog := filepath.Base(os.Args[0])
-	fmt.Fprintf(os.Stderr, "usage: %s [-list] <word>\n\n", prog)
+	fmt.Fprintf(os.Stderr, "usage: %s [-list] [-color] <word>\n\n", prog)
 	fmt.Fprintf(os.Stderr, "Prints an ASCII banner matching <word>.\n\nwords:\n")
 	for _, name := range names() {
 		fmt.Fprintf(os.Stderr, "  %s\n", name)

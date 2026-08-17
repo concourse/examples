@@ -43,6 +43,37 @@ func TestLookup(t *testing.T) {
 	}
 }
 
+func TestColorize(t *testing.T) {
+	const art = "hello"
+
+	tests := []struct {
+		name    string
+		color   string
+		want    string
+		wantErr bool
+	}{
+		{"empty leaves art untouched", "", art, false},
+		{"red", "red", "\x1b[31mhello\x1b[0m", false},
+		{"green", "green", "\x1b[32mhello\x1b[0m", false},
+		{"blue", "blue", "\x1b[34mhello\x1b[0m", false},
+		{"case insensitive", "ReD", "\x1b[31mhello\x1b[0m", false},
+		{"surrounding whitespace", "  blue  ", "\x1b[34mhello\x1b[0m", false},
+		{"unknown color", "purple", "", true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := colorize(art, tt.color)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("colorize(%q, %q) err = %v, wantErr %v", art, tt.color, err, tt.wantErr)
+			}
+			if got != tt.want {
+				t.Errorf("colorize(%q, %q) = %q, want %q", art, tt.color, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestNames(t *testing.T) {
 	got := names()
 

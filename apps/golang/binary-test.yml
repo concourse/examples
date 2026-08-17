@@ -16,3 +16,6 @@ run:
       ./binary/ascii-banner concourse
       ./binary/ascii-banner plane
       ./binary/ascii-banner pilot
+      ./binary/ascii-banner -color blue concourse
+      ./binary/ascii-banner -color red plane
+      ./binary/ascii-banner -color green pilot
