@@ -86,6 +86,7 @@ var images = map[string]string{
 
 func main() {
 	list := flag.Bool("list", false, "list the available banner words and exit")
+	border := flag.Bool("border", false, "draw a border around the banner")
 	flag.Usage = usage
 	flag.Parse()
 
@@ -109,7 +110,35 @@ func main() {
 		os.Exit(1)
 	}
 
+	if *border {
+		art = withBorder(art)
+	}
+
 	fmt.Println(art)
+}
+
+// withBorder wraps art in a box drawn with - and | characters.
+func withBorder(art string) string {
+	lines := strings.Split(art, "\n")
+
+	// Find the widest line (measured in runes, since the art can be unicode).
+	width := 0
+	for _, line := range lines {
+		if n := len([]rune(line)); n > width {
+			width = n
+		}
+	}
+
+	top := "+" + strings.Repeat("-", width+2) + "+"
+
+	var b strings.Builder
+	b.WriteString(top + "\n")
+	for _, line := range lines {
+		pad := width - len([]rune(line))
+		b.WriteString("| " + line + strings.Repeat(" ", pad) + " |\n")
+	}
+	b.WriteString(top)
+	return b.String()
 }
 
 // lookup finds the art for a word

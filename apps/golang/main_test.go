@@ -43,6 +43,70 @@ func TestLookup(t *testing.T) {
 	}
 }
 
+func TestWithBorder(t *testing.T) {
+	t.Run("single line", func(t *testing.T) {
+		got := withBorder("abc")
+		want := strings.Join([]string{
+			"+-----+",
+			"| abc |",
+			"+-----+",
+		}, "\n")
+		if got != want {
+			t.Errorf("withBorder(\"abc\") =\n%s\nwant\n%s", got, want)
+		}
+	})
+
+	t.Run("ragged lines are padded to the widest", func(t *testing.T) {
+		got := withBorder("a\nbbbb\ncc")
+		want := strings.Join([]string{
+			"+------+",
+			"| a    |",
+			"| bbbb |",
+			"| cc   |",
+			"+------+",
+		}, "\n")
+		if got != want {
+			t.Errorf("withBorder ragged =\n%s\nwant\n%s", got, want)
+		}
+	})
+
+	t.Run("width is measured in runes not bytes", func(t *testing.T) {
+		// ⣿ is 3 bytes but one column; the border must line up on rune count.
+		got := withBorder("⣿⣿")
+		want := strings.Join([]string{
+			"+----+",
+			"| ⣿⣿ |",
+			"+----+",
+		}, "\n")
+		if got != want {
+			t.Errorf("withBorder(\"⣿⣿\") =\n%s\nwant\n%s", got, want)
+		}
+	})
+
+	t.Run("every row has equal display width", func(t *testing.T) {
+		bordered := withBorder(lookupOrFatal(t, "pilot"))
+		lines := strings.Split(bordered, "\n")
+		width := len([]rune(lines[0]))
+		for i, line := range lines {
+			if n := len([]rune(line)); n != width {
+				t.Errorf("line %d has %d runes, want %d: %q", i, n, width, line)
+			}
+		}
+		if !strings.HasPrefix(lines[0], "+") || !strings.HasSuffix(lines[0], "+") {
+			t.Errorf("top border = %q, want +...+", lines[0])
+		}
+	})
+}
+
+func lookupOrFatal(t *testing.T, word string) string {
+	t.Helper()
+	art, ok := lookup(word)
+	if !ok {
+		t.Fatalf("lookup(%q) failed", word)
+	}
+	return art
+}
+
 func TestNames(t *testing.T) {
 	got := names()
 

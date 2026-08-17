@@ -16,3 +16,6 @@ run:
       ./binary/ascii-banner concourse
       ./binary/ascii-banner plane
       ./binary/ascii-banner pilot
+      ./binary/ascii-banner -border concourse
+      ./binary/ascii-banner -border plane
+      ./binary/ascii-banner -border pilot
