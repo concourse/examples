@@ -24,6 +24,7 @@ resources:
 
 jobs:
 - name: set-feature-pipelines
+  public: true
   plan:
   - in_parallel:
     - get: branches
@@ -45,6 +46,7 @@ jobs:
           branch: ((.:branch))
 
 - name: test
+  public: true
   plan:
   - in_parallel:
     - get: repo
@@ -56,6 +58,7 @@ jobs:
     params: {MODULE: apps/golang}
 
 - name: build
+  public: true
   plan:
   - in_parallel:
     - get: repo
